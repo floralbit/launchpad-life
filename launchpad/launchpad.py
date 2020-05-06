@@ -100,11 +100,11 @@ class Pad:
         status = 176 if self.pad_num in ALT_STATUS_PADS else 144
         self.midi_output.write([[[status, self.pad_num, color, 0], 0]])
 
-    def toggle(self):
+    def toggle(self, color=None):
         if self.toggled:
             self.set_off()
         else:
-            self.set_on()
+            self.set_on(color=color)
 
     def set_on(self, color=None):
         if not color:

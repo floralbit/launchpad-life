@@ -21,8 +21,9 @@ if __name__ == '__main__':
     lpad = launchpad.Launchpad()
 
     past_time = time.time_ns()
-    playing = True
     step_timer = 0.0
+    playing = True
+    lpad.get_pad(launchpad.CONTROL_PAD_FORWARD).set_on(launchpad.COLOR_GREEN) # show we're playing to start
 
     grid = conway.init_grid()
 
@@ -51,7 +52,9 @@ if __name__ == '__main__':
                     grid[event.pad_x][event.pad_y] = not grid[event.pad_x][event.pad_y]
 
                 if event.pad_type == launchpad.PAD_TYPE_CONTROL:
-                    # pad = lpad.get_pad(event.pad_num)
+                    pad = lpad.get_pad(event.pad_num)
+                    pad.set_on(launchpad.COLOR_PURPLE)
+
                     if event.pad_num == launchpad.CONTROL_PAD_UP:
                         TIME_STEP_SECONDS = TIME_STEP_SECONDS / TIME_CHANGE_FACTOR
                     if event.pad_num == launchpad.CONTROL_PAD_DOWN:
@@ -61,6 +64,10 @@ if __name__ == '__main__':
                         draw_grid(lpad, grid)
                     if event.pad_num == launchpad.CONTROL_PAD_FORWARD:
                         playing = not playing
+                        if playing:
+                            pad.set_on(launchpad.COLOR_GREEN)
+                        else:
+                            pad.set_on(launchpad.COLOR_RED)
                     if event.pad_num == launchpad.CONTROL_PAD_SESSION:
                         grid = conway.randomize_grid(grid)
                         draw_grid(lpad, grid)
@@ -68,3 +75,8 @@ if __name__ == '__main__':
                         step_timer = 0.0
                         grid = conway.run_step(grid)
                         draw_grid(lpad, grid)
+
+            if event.event_type == launchpad.EVENT_RELEASE and event.pad_type == launchpad.PAD_TYPE_CONTROL:
+                pad = lpad.get_pad(event.pad_num)
+                if pad.pad_num != launchpad.CONTROL_PAD_FORWARD: # special case for play/pause
+                    pad.set_off()

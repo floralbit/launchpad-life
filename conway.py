@@ -4,6 +4,23 @@ import random
 GRID_WIDTH = 8
 GRID_HEIGHT = 8
 
+GAME_SET_LIFE = ("life", (3,), (2, 3))
+GAME_SET_HIGH_LIFE = ("high life", (3, 6), (2, 3))
+GAME_SET_2X2 = ("2x2", (3, 6), (1, 2, 5))
+GAME_SET_LIFE_WITHOUT_DEATH = ("life without death", (3,), (0, 1, 2, 3, 4, 5, 6, 7, 8))  # B3/S012345678
+GAME_SET_SEEDS = ("seeds", (2,), ())  # B2/S
+GAME_SET_DAY_AND_NIGHT = ("day & night", (3, 6, 7, 8), (3, 4, 6, 7, 8))  # B3678/S34678
+
+GAME_SETS = [
+    GAME_SET_LIFE,
+    GAME_SET_HIGH_LIFE,
+    GAME_SET_2X2,
+    GAME_SET_LIFE_WITHOUT_DEATH,
+    GAME_SET_SEEDS,
+    GAME_SET_DAY_AND_NIGHT,
+]
+CURRENT_GAME_SET = GAME_SET_LIFE
+
 
 def init_grid():
     grid = []
@@ -15,14 +32,16 @@ def init_grid():
 
 
 def run_step(grid):
+    _, birth_counts, stationary_counts = CURRENT_GAME_SET
+
     new_grid = copy.deepcopy(grid)
     for i in range(0, GRID_WIDTH):
         for j in range(0, GRID_HEIGHT):
             is_alive = grid[i][j]
             living, dead = check_neighbors(grid, i, j)
-            if is_alive and (living == 2 or living == 3):
+            if is_alive and (living in stationary_counts):
                 new_grid[i][j] = True
-            elif not is_alive and living == 3:
+            elif not is_alive and (living in birth_counts):
                 new_grid[i][j] = True
             else:
                 new_grid[i][j] = False
@@ -68,3 +87,10 @@ def randomize_grid(grid):
         for y in range(0, GRID_HEIGHT):
             new_grid[x][y] = bool(random.getrandbits(1))
     return new_grid
+
+
+def toggle_next_game_set():
+    global CURRENT_GAME_SET
+    i = (GAME_SETS.index(CURRENT_GAME_SET) + 1) % len(GAME_SETS)
+    CURRENT_GAME_SET = GAME_SETS[i]
+    print(CURRENT_GAME_SET[0])

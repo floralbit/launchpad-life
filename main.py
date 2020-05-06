@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
         events = lpad.poll_events()
         for event in events:
-            print(event)
+            # print(event)
             if event.event_type == launchpad.EVENT_PRESS:
                 if event.pad_type == launchpad.PAD_TYPE_GRID:
                     pad = lpad.get_grid_pad(event.pad_x, event.pad_y)
@@ -69,6 +69,8 @@ if __name__ == '__main__':
                     if event.pad_num == launchpad.CONTROL_PAD_USER1:
                         renderer.toggle_next_mode()
                         renderer.draw_grid(lpad, grid)
+                    if event.pad_num == launchpad.CONTROL_PAD_USER2:
+                        conway.toggle_next_game_set()
 
             if event.event_type == launchpad.EVENT_RELEASE and event.pad_type == launchpad.PAD_TYPE_CONTROL:
                 pad = lpad.get_pad(event.pad_num)
